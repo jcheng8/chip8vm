@@ -1,8 +1,9 @@
 #include <fstream>
 #include <iostream>
 #include <stdlib.h>
-
 #include "chip.h"
+
+#define SPRITE_WIDTH 8
 
 void Chip::Initialize() {
     PC_ = MEMORY_OFFSET;
@@ -58,7 +59,7 @@ void Chip::EmulateCycle() {
     switch (op) {
         case 0x0000:
             if (instruction == 0x00E0) { // 00E0: clear the screen
-                //display_.clear();
+                for (auto& row: display_) row.fill(0);
             }
             if (instruction == 0x00EE) { // 00EE: return from a subroutine
                PC_ = stack_[SP_];
@@ -187,9 +188,30 @@ void Chip::EmulateCycle() {
 
         case 0xD000: // DXYN:  Display n-byte sprite starting at memory location I 
                      // at (Vx, Vy), set VF = collision
+           { 
+                int x_pos = V_[x], y_pos = V_[y];
+                int ands[8] = {128, 64, 32, 16, 8, 4, 2, 1};
+                bool collision = false;
+                for (int i = 0; i < n; ++i) {
+                    for (int j = 0; j < SPRITE_WIDTH; ++j) {
+                       if (x_pos + j == SCREEN_WIDTH) {
+                            x_pos = -j;
+                        } 
+                        if (y_pos + i == SCREEN_HEIGHT) {
+                            y_pos = -i;
+                        }
+                        uint8_t oldVal = display_[x_pos + j][y_pos + i];
+                        uint8_t newVal = (memory_[I_ + i] & ands[j]) >> (8 - j - 1);
+                        if (oldVal == 1 && newVal == 1) { collision = true; }
 
-            //bool collision = display_.DrawSprite(V_[x], V_[y], I_, n);
-            //V_[0xF] = collision ? 1 : 0;
+                        display_[x_pos + j][y_pos + i] ^= newVal;
+                    }
+                    x_pos = V_[x];
+                    y_pos = V_[y];
+                }
+
+                V_[0xF] = collision ? 1 : 0;
+            }
             break;
 
         case 0xE000:

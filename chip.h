@@ -5,9 +5,13 @@
 #include <stack>
 
 #define PIXELS (64*32)
+#define SCREEN_WIDTH 64
+#define SCREEN_HEIGHT 32
 #define MEMORY_OFFSET 0x200
 #define FONTSET_SIZE 80
 
+using VisualMemory = std::array<std::array<uint8_t, SCREEN_HEIGHT>, SCREEN_WIDTH>;
+ 
 const uint8_t fontset[FONTSET_SIZE] = {
     0xF0, 0x90, 0x90, 0x90, 0xF0,       // 0
     0x20, 0x60, 0x20, 0x20, 0x70,       // 1
@@ -34,7 +38,7 @@ private:
     std::array<uint16_t, 16>     stack_;
     uint8_t                      key_;
 
-//    std::array<uint8_t, PIXELS>  gfx_; 
+    // std::array<uint8_t, PIXELS>  gfx_; 
     uint16_t                     I_;
     uint16_t                     PC_;
     uint16_t                     SP_;
@@ -42,6 +46,7 @@ private:
     uint8_t                      delay_timer_;
     uint8_t                      sound_timer_;
 
+    VisualMemory display_;
      
 public:
     void Initialize();
@@ -49,6 +54,9 @@ public:
     void EmulateCycle();
     void OnKey(uint8_t key) { key_ = key; }
 
+    const VisualMemory& GetDisplay() const {
+        return display_;
+    }
 private:
     void SkipNextInstruction() { PC_ += 2; }
 };
