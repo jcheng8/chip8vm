@@ -91,10 +91,8 @@ int main(int argc, char* argv[]) {
     std::string rom = "../roms/PONG";
     if (argc == 2) rom = argv[1];
     if (0 != g_chip.LoadGame(rom.c_str())) {
-        std::cerr << "Failed to load roms" << std::endl;
+        std::cerr << "Failed to load rom " << rom << std::endl;
         exit(1);
-    } else {
-        std::cout << "Game PONG" << std::endl;
     }
 
     GLFWwindow* window;
