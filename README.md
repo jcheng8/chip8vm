@@ -1,6 +1,6 @@
 # chip8vm
 
-chip8vm in C++. Get introduced to chip8 by great code club ([https://github.com/greatcodeclub/chip8]()). The comprenhensive guide "Mastering Chip8" is here ([http://mattmik.com/chip8.html]()).
+chip8vm in C++. UI is implemented in GLFW ([http://www.glfw.org/]()). Get introduced to chip8 by great code club ([https://github.com/greatcodeclub/chip8]()). The comprenhensive guide "Mastering Chip8" is here ([http://mattmik.com/chip8.html]()).
  
 Learnt a lot from Laurence's blog [http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/]() and borrowd some code from its github repo([https://github.com/eshyong/Chip-8-Emulator]()).
 
