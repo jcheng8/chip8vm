@@ -7,12 +7,15 @@ LDFLAGS = `pkg-config --static --libs glfw3`
 SOURCES = vm.cpp renderer.cpp chip.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
+OUTPUTDIR = bin
+
 EXECUTABLE = vm
 
 all: $(SOURCES) $(EXECUTABLE)
 	 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
+	mkdir -p $(OUTPUTDIR)	
+	$(CC) $(OBJECTS) -o $(OUTPUTDIR)/$@ $(LDFLAGS)
 	 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@

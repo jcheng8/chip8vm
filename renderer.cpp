@@ -13,11 +13,9 @@ Renderer::Renderer(int winWidth, int winHeight, int screenWidth, int screenHeigh
     scaleY_ = (winHeight_ * 1.0 / screenHeight_);
 }
 
-void Renderer::Draw(GLFWwindow *window)
+void Renderer::Draw()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    //glMatrixMode(GL_MODELVIEW); //Switch to the drawing perspective
-    //glLoadIdentity(); //Reset the drawing perspective
     const VisualMemory& display = chip_.GetDisplay();
 
     for (int i = 0; i < screenWidth_; ++i) {

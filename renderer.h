@@ -6,7 +6,7 @@ class Chip;
 class Renderer {
 public:
     Renderer(int winWidth, int winHeight, int screenWidth, int screenHeight, Chip& chip);
-    void Draw(GLFWwindow *window);
+    void Draw();
 private:
     int winWidth_, winHeight_, screenWidth_, screenHeight_;
     float scaleX_, scaleY_;

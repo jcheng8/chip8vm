@@ -10,7 +10,7 @@
 #define WIN_WIDTH 640
 #define WIN_HEIGHT 320
 
-#define CPU_SPEED 100 //Hz
+#define CPU_SPEED 200 //Hz
 #define CYCLE_TIME_MS (1000/CPU_SPEED)
 Chip g_chip;
 void keyboard_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
@@ -88,7 +88,9 @@ int main(int argc, char* argv[]) {
     Renderer renderer(WIN_WIDTH, WIN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT, g_chip);
 
     g_chip.Initialize();
-    if (0 != g_chip.LoadGame("./roms/PONG")) {
+    std::string rom = "../roms/PONG";
+    if (argc == 2) rom = argv[1];
+    if (0 != g_chip.LoadGame(rom.c_str())) {
         std::cerr << "Failed to load roms" << std::endl;
         exit(1);
     } else {
@@ -102,7 +104,8 @@ int main(int argc, char* argv[]) {
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "Chip8 vm", NULL, NULL);
+    std::string title = "Chip8 vm ";
+    window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, (title + rom).c_str(), NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -130,33 +133,31 @@ int main(int argc, char* argv[]) {
     // clears screen color
     glClearColor(0.f, 0.f, 0.f, 1.f);
 
-    //auto last = std::chrono::system_clock::now();
+    auto last = std::chrono::system_clock::now();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-
+        last  = std::chrono::system_clock::now();
         g_chip.EmulateCycle();
         /* Render here */
-        renderer.Draw(window);
-
+        renderer.Draw();
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
-        /* Poll for and process events */
-        glfwPollEvents();
-
-        /*
         auto now = std::chrono::system_clock::now();
         std::chrono::duration<double> diff = now - last;
         auto elapse_ms = diff.count() * 1000;
-        auto sleep_time = (CYCLE_TIME_MS - elapse_ms) * 1000ULL;
-        if (sleep_time > 0) {
-            usleep(sleep_time);
+        auto time_diff = CYCLE_TIME_MS - elapse_ms;
+        if (time_diff > 0) {
+            usleep(time_diff * 1000ULL);
+        } else {
+            auto catchup = -time_diff/CYCLE_TIME_MS;
+            while (catchup-- > 0) { g_chip.EmulateCycle(); }
         }
          
-        last  = std::chrono::system_clock::now();
-        */
+        /* Poll for and process events */
+        glfwPollEvents();
     }
 
     glfwDestroyWindow(window);
