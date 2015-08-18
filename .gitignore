@@ -31,3 +31,4 @@
 *.app
 
 bin/
+.DS_Store
